@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\ProjectsFolder\\WhereToGoWebApi\\WhereToGoWebApi.csproj": {}
+    "C:\\ProjectsFolder\\WhereToGo\\WhereToGoWebApi\\WhereToGoWebApi.csproj": {}
   },
   "projects": {
-    "C:\\ProjectsFolder\\WhereToGoWebApi\\WhereToGoWebApi.csproj": {
+    "C:\\ProjectsFolder\\WhereToGo\\WhereToGoWebApi\\WhereToGoWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\ProjectsFolder\\WhereToGoWebApi\\WhereToGoWebApi.csproj",
+        "projectUniqueName": "C:\\ProjectsFolder\\WhereToGo\\WhereToGoWebApi\\WhereToGoWebApi.csproj",
         "projectName": "WhereToGoWebApi",
-        "projectPath": "C:\\ProjectsFolder\\WhereToGoWebApi\\WhereToGoWebApi.csproj",
+        "projectPath": "C:\\ProjectsFolder\\WhereToGo\\WhereToGoWebApi\\WhereToGoWebApi.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\ProjectsFolder\\WhereToGoWebApi\\obj\\",
+        "outputPath": "C:\\ProjectsFolder\\WhereToGo\\WhereToGoWebApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -61,6 +61,10 @@
               "target": "Package",
               "version": "[2.2.0, )",
               "autoReferenced": true
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[2.2.4, )"
             }
           },
           "imports": [

@@ -1,0 +1,13 @@
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\bin\Debug\netcoreapp2.2\WhereToGoWebApi.deps.json
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\bin\Debug\netcoreapp2.2\WhereToGoWebApi.runtimeconfig.json
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\bin\Debug\netcoreapp2.2\WhereToGoWebApi.runtimeconfig.dev.json
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\bin\Debug\netcoreapp2.2\WhereToGoWebApi.dll
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\bin\Debug\netcoreapp2.2\WhereToGoWebApi.pdb
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.csproj.CoreCompileInputs.cache
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.RazorAssemblyInfo.cache
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.RazorAssemblyInfo.cs
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.AssemblyInfoInputs.cache
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.AssemblyInfo.cs
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.RazorTargetAssemblyInfo.cache
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.dll
+C:\ProjectsFolder\WhereToGo\WhereToGoWebApi\obj\Debug\netcoreapp2.2\WhereToGoWebApi.pdb
