@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WhereToGoWebApi.DataBaseContext;
+using WhereToGoWebApi.DbRepository;
+using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.TokenSettings;
 
@@ -36,8 +32,9 @@ namespace WhereToGoWebApi
             services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtSettings>>().Value);
 
             var connection = Configuration.GetConnectionString("DefaultConnection");
-
             services.AddDbContextPool<EventDbContext>(x => x.UseSqlServer(connection));
+
+            services.AddScoped<IEventDbRepository, EventDbRepository>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {

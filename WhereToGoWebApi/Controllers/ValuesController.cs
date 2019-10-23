@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using WhereToGoWebApi.DataBaseContext;
-using WhereToGoWebApi.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WhereToGoWebApi.IDbRepository;
 
 namespace WhereToGoWebApi.Controllers
 {
@@ -10,6 +7,13 @@ namespace WhereToGoWebApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IEventDbRepository dbRepository;
+
+        public ValuesController(IEventDbRepository dbRepository)
+        {
+            this.dbRepository = dbRepository;
+        }
+
         [HttpGet]
         public ActionResult Get() =>
             Ok();

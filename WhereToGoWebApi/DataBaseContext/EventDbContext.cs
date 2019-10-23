@@ -12,6 +12,8 @@ namespace WhereToGoWebApi.DataBaseContext
         public DbSet<Event> Events { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Rating> Ratings { get; set; }
-
+        public DbSet<Meeting> Meetings { get; set; }
+        public DbSet<EventMeeting> EventMeetings { get; set; }
+        public DbSet<UserEvent> UserEvents { get; set; }
     }
 }

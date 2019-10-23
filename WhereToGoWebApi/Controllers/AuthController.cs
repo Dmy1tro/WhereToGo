@@ -16,12 +16,15 @@ namespace WhereToGoWebApi.Controllers
     [ApiController]
     public class AuthController : Controller
     {
-        private readonly UserManager<User> manager;
+        private const string userRole = "user";
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly JwtSettings jwtSettings;
-        public AuthController(UserManager<User> manager, JwtSettings jwtSettings)
+        public AuthController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, JwtSettings jwtSettings)
         {
-            this.manager = manager;
+            this.userManager = userManager;
             this.jwtSettings = jwtSettings;
+            this.roleManager = roleManager;
         }
 
         [HttpGet]
@@ -34,9 +37,9 @@ namespace WhereToGoWebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("not valid model");
 
-            var user = await manager.FindByNameAsync(loginModel.Login);
+            var user = await userManager.FindByNameAsync(loginModel.Login);
 
-            if (user is null || !(await manager.CheckPasswordAsync(user, loginModel.Password)))
+            if (user is null || !(await userManager.CheckPasswordAsync(user, loginModel.Password)))
                 return BadRequest("login or password is wrong");
 
             var claims = new[]
@@ -74,10 +77,18 @@ namespace WhereToGoWebApi.Controllers
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            var result = await manager.CreateAsync(user, registerModel.Password);
+            var result = await userManager.CreateAsync(user, registerModel.Password);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors.Select(x => x.Description));
+
+            var roleUserExists = await roleManager.RoleExistsAsync(userRole);
+            if (!roleUserExists)
+            {
+                await roleManager.CreateAsync(new IdentityRole(userRole));
+            }
+
+            await userManager.AddToRoleAsync(user, userRole);
 
             return Ok();
         }
