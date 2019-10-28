@@ -16,11 +16,16 @@ namespace WhereToGoWebApi.Controllers
     [ApiController]
     public class AuthController : Controller
     {
-        private const string userRole = "user";
+        private const string userRole = "User";
+        private const string userIdClaim = "userId";
+        private const string roleClaim = "role";
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly JwtSettings jwtSettings;
-        public AuthController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, JwtSettings jwtSettings)
+
+        public AuthController(UserManager<User> userManager, 
+                              RoleManager<IdentityRole> roleManager,
+                              JwtSettings jwtSettings)
         {
             this.userManager = userManager;
             this.jwtSettings = jwtSettings;
@@ -42,9 +47,11 @@ namespace WhereToGoWebApi.Controllers
             if (user is null || !(await userManager.CheckPasswordAsync(user, loginModel.Password)))
                 return BadRequest("login or password is wrong");
 
+            var roles = await userManager.GetRolesAsync(user);
             var claims = new[]
             {
-                new Claim("userId", user.Id)
+                new Claim(userIdClaim, user.Id),
+                new Claim(roleClaim, roles.FirstOrDefault())
             };
 
             var signKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey));
