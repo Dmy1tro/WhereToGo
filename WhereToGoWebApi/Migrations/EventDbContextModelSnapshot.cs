@@ -229,13 +229,21 @@ namespace WhereToGoWebApi.Migrations
                 {
                     b.Property<string>("OrganizerId");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("InstType")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.Property<string>("PlaceName")
                         .IsRequired()
                         .HasMaxLength(500);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Position")
                         .IsRequired()
                         .HasMaxLength(200);
+
+                    b.Property<string>("TelNumber")
+                        .IsRequired()
+                        .HasMaxLength(50);
 
                     b.HasKey("OrganizerId");
 
@@ -278,6 +286,8 @@ namespace WhereToGoWebApi.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 

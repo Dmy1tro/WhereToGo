@@ -10,6 +10,7 @@ namespace WhereToGoWebApi.Models
 {
     public class User : IdentityUser
     {
+        public string LastName { get; set; }
         public virtual Organizer Organizer { get; set; }
 
         public virtual ICollection<UserEvent> UserEvents { get; set; } = new List<UserEvent>();

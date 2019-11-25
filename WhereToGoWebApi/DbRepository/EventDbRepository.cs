@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using WhereToGoWebApi.DataBaseContext;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
@@ -26,5 +27,14 @@ namespace WhereToGoWebApi.DbRepository
         public IQueryable<Rating> Ratings => context.Ratings;
 
         public IQueryable<UserEvent> UserEvents => context.UserEvents;
+
+        public async Task<bool> CreateAndSaveOrganaizerAsync(Organizer organizer)
+        {
+            await context.Organizers.AddAsync(organizer);
+            return await this.SaveChangesAsync();
+        }
+
+        public async Task<bool> SaveChangesAsync() =>
+            await context.SaveChangesAsync() > 0;
     }
 }

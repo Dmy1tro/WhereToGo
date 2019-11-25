@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.TokenSettings;
 
@@ -17,18 +18,23 @@ namespace WhereToGoWebApi.Controllers
     public class AuthController : Controller
     {
         private const string userRole = "User";
+        private const string adminRole = "Admin";
+        private const string organaizerRole = "Organaizer";
         private const string userIdClaim = "userId";
         private const string roleClaim = "role";
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IEventDbRepository repository;
         private readonly JwtSettings jwtSettings;
 
         public AuthController(UserManager<User> userManager, 
                               RoleManager<IdentityRole> roleManager,
+                              IEventDbRepository repository, 
                               JwtSettings jwtSettings)
         {
             this.userManager = userManager;
             this.jwtSettings = jwtSettings;
+            this.repository = repository;
             this.roleManager = roleManager;
         }
 
@@ -42,7 +48,7 @@ namespace WhereToGoWebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("not valid model");
 
-            var user = await userManager.FindByNameAsync(loginModel.Login);
+            var user = await userManager.FindByEmailAsync(loginModel.Email);
 
             if (user is null || !(await userManager.CheckPasswordAsync(user, loginModel.Password)))
                 return BadRequest("login or password is wrong");
@@ -68,19 +74,22 @@ namespace WhereToGoWebApi.Controllers
                 new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    name = loginModel.Login
+                    role = roles.FirstOrDefault(),
+                    name = user.UserName
                 });
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult> Register(RegisterModel registerModel)
+        [HttpPost("registerUser")]
+        public async Task<ActionResult> RegisterUser(RegisterUser registerModel)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !registerModel.AcceptRules)
                 return BadRequest("model not valid");
 
             var user = new User
             {
-                UserName = registerModel.Login,
+                UserName = registerModel.FirstName,
+                LastName = registerModel.LastName,
+                Email = registerModel.Email,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
@@ -89,13 +98,30 @@ namespace WhereToGoWebApi.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors.Select(x => x.Description));
 
-            var roleUserExists = await roleManager.RoleExistsAsync(userRole);
-            if (!roleUserExists)
-            {
-                await roleManager.CreateAsync(new IdentityRole(userRole));
-            }
-
             await userManager.AddToRoleAsync(user, userRole);
+
+            return Ok();
+        }
+
+        [HttpPost("registerCompany")]
+        public async Task<ActionResult> RegisterCompany(RegisterCompany registerModel)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("model not valid");
+
+            var organaizer = new Organizer
+            {
+                User = await userManager.FindByEmailAsync(registerModel.Email),
+                InstType = registerModel.InstType,
+                PlaceName = registerModel.PlaceName,
+                Position = registerModel.Position,
+                TelNumber = registerModel.TelNumber
+            };
+
+            var complete = await repository.CreateAndSaveOrganaizerAsync(organaizer);
+
+            if (!complete)
+                return BadRequest("Cant save to DataBase");
 
             return Ok();
         }

@@ -85,8 +85,7 @@ namespace WhereToGoWebApi
             app.UseCors(option => 
                 option.WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                );
+                .AllowAnyMethod());
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
