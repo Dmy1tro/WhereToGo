@@ -13,6 +13,7 @@ using WhereToGoWebApi.DataBaseContext;
 using WhereToGoWebApi.DbRepository;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
+using WhereToGoWebApi.Services;
 using WhereToGoWebApi.TokenSettings;
 
 namespace WhereToGoWebApi
@@ -35,6 +36,7 @@ namespace WhereToGoWebApi
             services.AddDbContextPool<EventDbContext>(x => x.UseSqlServer(connection));
 
             services.AddScoped<IEventDbRepository, EventDbRepository>();
+            services.AddScoped<ISignInService, SignInService>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -46,6 +48,8 @@ namespace WhereToGoWebApi
             }
             ).AddEntityFrameworkStores<EventDbContext>()
             .AddDefaultTokenProviders();
+
+            services.AddCors();
 
             services.AddAuthentication(option =>
             {
@@ -65,8 +69,6 @@ namespace WhereToGoWebApi
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SigningKey"]))
                 };
             });
-
-            services.AddCors();
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

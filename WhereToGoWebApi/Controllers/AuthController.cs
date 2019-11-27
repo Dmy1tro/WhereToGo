@@ -1,15 +1,8 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
-using WhereToGoWebApi.TokenSettings;
+using WhereToGoWebApi.Services;
 
 namespace WhereToGoWebApi.Controllers
 {
@@ -17,25 +10,11 @@ namespace WhereToGoWebApi.Controllers
     [ApiController]
     public class AuthController : Controller
     {
-        private const string userRole = "User";
-        private const string adminRole = "Admin";
-        private const string organaizerRole = "Organaizer";
-        private const string userIdClaim = "userId";
-        private const string roleClaim = "role";
-        private readonly UserManager<User> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IEventDbRepository repository;
-        private readonly JwtSettings jwtSettings;
+        private readonly ISignInService signInService;
 
-        public AuthController(UserManager<User> userManager, 
-                              RoleManager<IdentityRole> roleManager,
-                              IEventDbRepository repository, 
-                              JwtSettings jwtSettings)
+        public AuthController(ISignInService signInService)
         {
-            this.userManager = userManager;
-            this.jwtSettings = jwtSettings;
-            this.repository = repository;
-            this.roleManager = roleManager;
+            this.signInService = signInService;
         }
 
         [HttpGet]
@@ -43,85 +22,58 @@ namespace WhereToGoWebApi.Controllers
             Ok();
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginModel loginModel)
+        public async Task<ActionResult> Login(LoginViewModel loginModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("not valid model");
 
-            var user = await userManager.FindByEmailAsync(loginModel.Email);
+            var loginResult = await signInService.LoginUser(loginModel);
 
-            if (user is null || !(await userManager.CheckPasswordAsync(user, loginModel.Password)))
-                return BadRequest("login or password is wrong");
-
-            var roles = await userManager.GetRolesAsync(user);
-            var claims = new[]
-            {
-                new Claim(userIdClaim, user.Id),
-                new Claim(roleClaim, roles.FirstOrDefault())
-            };
-
-            var signKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey));
-            int expiryInMinutes = int.Parse(jwtSettings.ExpiryInMinutes);
-
-            var token = new JwtSecurityToken(
-                issuer: jwtSettings.Site,
-                audience: jwtSettings.Site,
-                expires: DateTime.UtcNow.AddMinutes(loginModel.RememberMe ? expiryInMinutes * 2 : expiryInMinutes),
-                claims: claims,
-                signingCredentials: new SigningCredentials(signKey, SecurityAlgorithms.HmacSha256));
+            if (!loginResult.IsValid)
+                return BadRequest(loginResult.Errors);
 
             return Ok(
                 new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    role = roles.FirstOrDefault(),
-                    name = user.UserName
+                    token = loginResult.Token,
+                    roles = loginResult.Roles.ToArray(),
+                    name = loginResult.Name
                 });
         }
 
         [HttpPost("registerUser")]
-        public async Task<ActionResult> RegisterUser(RegisterUser registerModel)
+        public async Task<ActionResult> RegisterUser(RegisterUserViewModel registerModel)
         {
             if (!ModelState.IsValid || !registerModel.AcceptRules)
                 return BadRequest("model not valid");
 
-            var user = new User
+            var registerUserResult = await signInService.RegisterUser(registerModel);
+
+            if (!(registerUserResult.IsValid))
+                return BadRequest(registerUserResult.Errors);
+
+            if (registerModel.CreateCompany)
             {
-                UserName = registerModel.FirstName,
-                LastName = registerModel.LastName,
-                Email = registerModel.Email,
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
+                return Ok(
+                    new
+                    {
+                        passwordHash = registerUserResult.User.PasswordHash
+                    });
+            }
 
-            var result = await userManager.CreateAsync(user, registerModel.Password);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors.Select(x => x.Description));
-
-            await userManager.AddToRoleAsync(user, userRole);
-
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("registerCompany")]
-        public async Task<ActionResult> RegisterCompany(RegisterCompany registerModel)
+        public async Task<ActionResult> RegisterCompany(RegisterCompanyViewModel registerModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("model not valid");
 
-            var organaizer = new Organizer
-            {
-                User = await userManager.FindByEmailAsync(registerModel.Email),
-                InstType = registerModel.InstType,
-                PlaceName = registerModel.PlaceName,
-                Position = registerModel.Position,
-                TelNumber = registerModel.TelNumber
-            };
+            var registerCompanyResult = await signInService.RegisterCompany(registerModel);
 
-            var complete = await repository.CreateAndSaveOrganaizerAsync(organaizer);
-
-            if (!complete)
-                return BadRequest("Cant save to DataBase");
+            if (!registerCompanyResult.IsValid)
+                return BadRequest(registerCompanyResult.Errors);
 
             return Ok();
         }

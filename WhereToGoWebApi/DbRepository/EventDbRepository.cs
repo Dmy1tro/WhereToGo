@@ -34,7 +34,17 @@ namespace WhereToGoWebApi.DbRepository
             return await this.SaveChangesAsync();
         }
 
-        public async Task<bool> SaveChangesAsync() =>
-            await context.SaveChangesAsync() > 0;
+        public async Task<bool> SaveChangesAsync()
+        {
+            try
+            {
+                return await context.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+            
     }
 }
