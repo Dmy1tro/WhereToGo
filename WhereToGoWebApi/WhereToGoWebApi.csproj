@@ -10,6 +10,8 @@
     <Compile Remove="Migrations\20191021123348_Initial.Designer.cs" />
     <Compile Remove="Migrations\20191021124020_initial.cs" />
     <Compile Remove="Migrations\20191021124020_initial.Designer.cs" />
+    <Compile Remove="Migrations\20191127163404_moveToLocalDb.cs" />
+    <Compile Remove="Migrations\20191127163404_moveToLocalDb.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
