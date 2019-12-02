@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WhereToGoWebApi.Common.Authentication;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
-using WhereToGoWebApi.Models.AuthResults;
+using WhereToGoWebApi.Services.ServiceResults;
 using WhereToGoWebApi.TokenSettings;
 
 namespace WhereToGoWebApi.Services
@@ -119,5 +119,6 @@ namespace WhereToGoWebApi.Services
 
             return new RegisterResult();
         }
+
     }
 }

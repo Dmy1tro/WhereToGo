@@ -37,6 +37,7 @@ namespace WhereToGoWebApi
 
             services.AddScoped<IEventDbRepository, EventDbRepository>();
             services.AddScoped<ISignInService, SignInService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -72,6 +73,11 @@ namespace WhereToGoWebApi
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSwaggerGen(s => 
+            {
+                s.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "WhereToGoApi", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -87,11 +93,14 @@ namespace WhereToGoWebApi
             app.UseCors(option => 
                 option.WithOrigins("http://localhost:4200")
                 .AllowAnyHeader()
-                .AllowAnyMethod());
+                .AllowAnyMethod()); 
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "WhereToGoApi Version 1"));
         }
     }
 }
