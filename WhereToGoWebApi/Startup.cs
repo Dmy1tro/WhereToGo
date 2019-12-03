@@ -14,6 +14,7 @@ using WhereToGoWebApi.DbRepository;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Services;
+using WhereToGoWebApi.Services.Interfaces;
 using WhereToGoWebApi.TokenSettings;
 
 namespace WhereToGoWebApi
@@ -38,6 +39,7 @@ namespace WhereToGoWebApi
             services.AddScoped<IEventDbRepository, EventDbRepository>();
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEventService, EventService>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {

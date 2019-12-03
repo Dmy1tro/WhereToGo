@@ -159,11 +159,17 @@ namespace WhereToGoWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(500);
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500);
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<DateTime>("EndTime");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -174,7 +180,11 @@ namespace WhereToGoWebApi.Migrations
 
                     b.Property<decimal>("Price");
 
-                    b.Property<int>("TotalAmount");
+                    b.Property<int>("Quantity");
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.Property<DateTime>("StartTime");
 
                     b.HasKey("EventId");
 

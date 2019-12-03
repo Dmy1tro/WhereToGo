@@ -15,7 +15,9 @@ namespace WhereToGoWebApi.IDbRepository
         IQueryable<Organizer> Organizers { get; }
         IQueryable<Rating> Ratings { get; }
         IQueryable<UserEvent> UserEvents { get; }
+        IQueryable<User> Users { get; }
 
         Task<bool> CreateAndSaveOrganaizerAsync(Organizer organizer);
+        Task<bool> CreateAndSaveEventAsync(Event entity);
     }
 }

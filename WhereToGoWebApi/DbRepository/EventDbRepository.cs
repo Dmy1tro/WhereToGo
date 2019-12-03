@@ -28,9 +28,17 @@ namespace WhereToGoWebApi.DbRepository
 
         public IQueryable<UserEvent> UserEvents => context.UserEvents;
 
+        public IQueryable<User> Users => context.Users;
+
         public async Task<bool> CreateAndSaveOrganaizerAsync(Organizer organizer)
         {
             await context.Organizers.AddAsync(organizer);
+            return await this.SaveChangesAsync();
+        }
+
+        public async Task<bool> CreateAndSaveEventAsync(Event entity)
+        {
+            await context.Events.AddAsync(entity);
             return await this.SaveChangesAsync();
         }
 
