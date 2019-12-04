@@ -92,7 +92,7 @@ namespace WhereToGoWebApi.Services
             return new RegisterResult(user);
         }
 
-        public async Task<RegisterResult> RegisterCompany(RegisterCompanyViewModel model)
+        public async Task<RegisterResult> RegisterCompany(RegisterOrganaizerViewModel model)
         {
             var user = await userManager.FindByEmailAsync(model.Email);
 

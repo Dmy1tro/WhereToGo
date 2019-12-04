@@ -65,7 +65,7 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpPost("registerCompany")]
-        public async Task<ActionResult> RegisterCompany(RegisterCompanyViewModel registerModel)
+        public async Task<ActionResult> RegisterCompany(RegisterOrganaizerViewModel registerModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("model not valid");
