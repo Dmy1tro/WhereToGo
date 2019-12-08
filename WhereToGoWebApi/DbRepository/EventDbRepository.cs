@@ -30,15 +30,17 @@ namespace WhereToGoWebApi.DbRepository
 
         public IQueryable<User> Users => context.Users;
 
-        public async Task<bool> CreateAndSaveOrganaizerAsync(Organizer organizer)
+        public async Task<bool> CreateAndSaveEntityAsync<T>(T entity) where T : class
         {
-            await context.Organizers.AddAsync(organizer);
+            await context.Set<T>().AddAsync(entity);
+
             return await this.SaveChangesAsync();
         }
 
-        public async Task<bool> CreateAndSaveEventAsync(Event entity)
+        public async Task<bool> UpdateAndSaveEntityAsync<T>(T entity) where T : class
         {
-            await context.Events.AddAsync(entity);
+            await context.Set<T>().AddAsync(entity);
+
             return await this.SaveChangesAsync();
         }
 
@@ -53,6 +55,6 @@ namespace WhereToGoWebApi.DbRepository
                 return false;
             }
         }
-            
+
     }
 }

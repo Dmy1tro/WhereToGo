@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WhereToGoWebApi.Common.Authentication;
 using WhereToGoWebApi.Models;
 
 namespace WhereToGoWebApi.DataBaseContext.SeedData
 {
     public class SampleData
     {
-        public static void Proceed(EventDbContext dbContext)
+        public static void Proceed(EventDbContext dbContext, UserManager<User> userManager)
         {
             User user;
             Organizer organizer;
@@ -17,8 +19,10 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
             {
                 user = new User { UserName = "Dmytro", LastName = "Laskuryk", Email = "dmytro@gmail.com", SecurityStamp = Guid.NewGuid().ToString() };
 
-                dbContext.Users.Add(user);
-                dbContext.SaveChanges();
+                userManager.CreateAsync(user, "111111").Wait();
+
+                userManager.AddToRoleAsync(user, AppRoles.organaizerRole).Wait();
+                userManager.AddToRoleAsync(user, AppRoles.userRole).Wait();
             }
             else
             {

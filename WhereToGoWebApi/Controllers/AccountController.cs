@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WhereToGoWebApi.Common.Authentication;
 using WhereToGoWebApi.Common.Extensions;
 using WhereToGoWebApi.Models.AccountViewModels;
 using WhereToGoWebApi.Services;
@@ -11,7 +12,7 @@ namespace WhereToGoWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService accountService;
 
@@ -21,13 +22,13 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpPost("editProfile")]
-        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        public async Task<IActionResult> EditProfile(UserProfileViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Model not valid!");
 
-            var currentUserName = User.Claims.GetUserName(ClaimsIdentity.DefaultNameClaimType);
-            var result = await accountService.EditProfile(model, currentUserName);
+            var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
+            var result = await accountService.EditProfile(model, userId);
 
             if (!result.IsValid)
                 return BadRequest(result.Errors);
@@ -41,13 +42,26 @@ namespace WhereToGoWebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Model not valid!");
 
-            var currentUserName = User.Claims.GetUserName(ClaimsIdentity.DefaultNameClaimType);
-            var result = await accountService.ChangePassword(changePasswordModel, currentUserName);
+            var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
+            var result = await accountService.ChangePassword(changePasswordModel, userId);
 
             if (!result.IsValid)
                 return BadRequest(result.Errors);
 
             return NoContent();
         }
+
+        [HttpPost("subscribeOnEvent/{eventId}")]
+        public async Task<ActionResult> SubscribeOnEvent([FromRoute] int eventId)
+        {
+            var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
+            var result = await accountService.SubscribeOnEvent(eventId, userId);
+
+            if (!result.IsValid)
+                return BadRequest(result.Errors);
+
+            return NoContent();
+        }
+
     }
 }

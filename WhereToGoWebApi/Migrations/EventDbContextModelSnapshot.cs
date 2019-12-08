@@ -167,9 +167,9 @@ namespace WhereToGoWebApi.Migrations
                         .IsRequired()
                         .HasMaxLength(500);
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<DateTime?>("EndDate");
 
-                    b.Property<DateTime>("EndTime");
+                    b.Property<DateTime?>("EndTime");
 
                     b.Property<string>("Name")
                         .IsRequired()

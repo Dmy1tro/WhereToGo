@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,16 +15,20 @@ namespace WhereToGoWebApi.Services
     public class EventService : IEventService
     {
         private readonly IEventDbRepository dbRepository;
+        private readonly IMapper mapper;
 
-        public EventService(IEventDbRepository dbRepository)
+        public EventService(IEventDbRepository dbRepository, IMapper mapper)
         {
             this.dbRepository = dbRepository;
+            this.mapper = mapper;
         }
 
-        public async Task<BaseResult> CreateEvent(EventViewModel model, string userName)
+        public async Task<BaseResult> CreateEvent(EventViewModel model, string userId)
         {
-            var user = await dbRepository.Users.Include(x => x.Organizer).FirstOrDefaultAsync(x => x.UserName.Equals(userName));
-            var organaizerId = user.Organizer.OrganizerId;
+            if (!dbRepository.Organizers.Any(x => x.OrganizerId == userId))
+                return new BaseResult("Organaizer not found");
+
+            var organaizerId = userId;
 
             var _event = new Event 
             {
@@ -38,7 +44,7 @@ namespace WhereToGoWebApi.Services
                 OrganizerId = organaizerId
             };
 
-            var result = await dbRepository.CreateAndSaveEventAsync(_event);
+            var result = await dbRepository.CreateAndSaveEntityAsync(_event);
 
             if (!result)
                 return new BaseResult("Failed save to DataBase");
@@ -48,19 +54,30 @@ namespace WhereToGoWebApi.Services
 
         public async Task<IEnumerable<EventViewModel>> GetAllEvents() =>
             await dbRepository.Events
-            .Select(x => new EventViewModel 
-            {
-                EventId = x.EventId,
-                Description = x.Description,
-                Address = x.Address,
-                StartDate = x.StartDate,
-                StartTime = x.StartTime,
-                EndDate = x.EndDate,
-                EndTime = x.EndTime,
-                Name = x.Name,
-                Price = x.Price,
-                Quantity = x.Quantity
-            })
+            .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
             .ToListAsync();
+
+        public async Task<IEnumerable<EventViewModel>> GetEventsByFilters(EventViewModelFilter filter)
+        {
+            var result = dbRepository.Events;
+
+            if (!string.IsNullOrEmpty(filter.Name))
+                result = result.Where(x => x.Name.Contains(filter.Name, System.StringComparison.InvariantCultureIgnoreCase));
+
+            if (filter.MinDate != null)
+                result = result.Where(x => x.StartDate >= filter.MinDate);
+
+            if (filter.MaxDate != null)
+                result = result.Where(x => x.StartDate <= filter.MaxDate);
+
+            if (filter.MinPrice != null)
+                result = result.Where(x => x.Price >= filter.MinPrice);
+
+            if (filter.MaxPrice != null)
+                result = result.Where(x => x.Price <= filter.MaxPrice);
+
+            return await result.ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace WhereToGoWebApi.IDbRepository
         IQueryable<UserEvent> UserEvents { get; }
         IQueryable<User> Users { get; }
 
-        Task<bool> CreateAndSaveOrganaizerAsync(Organizer organizer);
-        Task<bool> CreateAndSaveEventAsync(Event entity);
+        Task<bool> CreateAndSaveEntityAsync<T>(T entity) where T : class;
+        Task<bool> UpdateAndSaveEntityAsync<T>(T entity) where T : class;
     }
 }

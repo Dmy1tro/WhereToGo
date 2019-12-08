@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,10 +38,14 @@ namespace WhereToGoWebApi
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContextPool<EventDbContext>(x => x.UseSqlServer(connection));
 
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             services.AddScoped<IEventDbRepository, EventDbRepository>();
+
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             services.AddIdentity<User, IdentityRole>(options =>
             {

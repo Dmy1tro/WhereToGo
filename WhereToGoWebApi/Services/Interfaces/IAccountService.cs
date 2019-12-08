@@ -9,8 +9,10 @@ namespace WhereToGoWebApi.Services
 {
     public interface IAccountService
     {
-        Task<BaseResult> EditProfile(EditProfileViewModel model, string currentUserName);
+        Task<BaseResult> EditProfile(UserProfileViewModel model, string userId);
 
-        Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string currentUserName);
+        Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string userId);
+
+        Task<BaseResult> SubscribeOnEvent(int eventId, string userId);
     }
 }

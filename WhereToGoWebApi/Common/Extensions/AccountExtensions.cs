@@ -8,8 +8,9 @@ namespace WhereToGoWebApi.Common.Extensions
 {
     public static class AccountExtensions
     {
-        public static string GetUserName(this IEnumerable<Claim> claims, string claimUserName) =>
-            claims.FirstOrDefault(x => x.Type.Equals(claimUserName, StringComparison.InvariantCultureIgnoreCase))?
+
+        public static string GetUserClaim(this IEnumerable<Claim> claims, string claim) =>
+            claims.FirstOrDefault(x => x.Type.Equals(claim, StringComparison.InvariantCultureIgnoreCase))?
             .Value;
     }
 }

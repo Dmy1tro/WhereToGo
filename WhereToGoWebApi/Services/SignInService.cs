@@ -52,7 +52,7 @@ namespace WhereToGoWebApi.Services
 
             var claims = new List<Claim>(roleClaims)
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
+                new Claim(AppClaims.IdClaim, user.Id)
             };
 
             var signKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey));
@@ -108,7 +108,7 @@ namespace WhereToGoWebApi.Services
                 TelNumber = model.TelNumber
             };
 
-            var complete = await repository.CreateAndSaveOrganaizerAsync(organaizer);
+            var complete = await repository.CreateAndSaveEntityAsync(organaizer);
 
             if (!complete)
                 return new RegisterResult("Failed save to DataBase");

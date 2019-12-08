@@ -9,7 +9,8 @@ namespace WhereToGoWebApi.Services.Interfaces
 {
     public interface IEventService
     {
-        Task<BaseResult> CreateEvent(EventViewModel model, string userName);
+        Task<BaseResult> CreateEvent(EventViewModel model, string userId);
         Task<IEnumerable<EventViewModel>> GetAllEvents();
+        Task<IEnumerable<EventViewModel>> GetEventsByFilters(EventViewModelFilter filter);
     }
 }
