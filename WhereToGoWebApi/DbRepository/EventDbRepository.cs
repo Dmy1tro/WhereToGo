@@ -39,7 +39,7 @@ namespace WhereToGoWebApi.DbRepository
 
         public async Task<bool> UpdateAndSaveEntityAsync<T>(T entity) where T : class
         {
-            await context.Set<T>().AddAsync(entity);
+            context.Set<T>().Update(entity);
 
             return await this.SaveChangesAsync();
         }
