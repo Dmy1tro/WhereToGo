@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WhereToGoWebApi.Services.ServiceResults
 {
-    public class BaseResult
+    public abstract class BaseResult
     {
         public BaseResult(IEnumerable<string> errors)
         {

@@ -28,9 +28,9 @@ namespace WhereToGoWebApi.Services
             var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
 
             if (result.Succeeded)
-                return new BaseResult(result.Errors.Select(x => x.Description));
+                return new ErrorResult(result.Errors.Select(x => x.Description));
 
-            return new BaseResult();
+            return new OkResult();
         }
 
         public async Task<BaseResult> EditProfile(UserProfileViewModel model, string userId)
@@ -44,9 +44,9 @@ namespace WhereToGoWebApi.Services
             var result = await userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
-                return new BaseResult(result.Errors.Select(x => x.Description));
+                return new ErrorResult(result.Errors.Select(x => x.Description));
 
-            return new BaseResult();
+            return new OkResult();
         }
 
         public async Task<BaseResult> SubscribeOnEvent(int eventId, string userId)
@@ -54,10 +54,10 @@ namespace WhereToGoWebApi.Services
             var user = await userManager.FindByIdAsync(userId);
 
             if (!repository.Events.Any(x => x.EventId == eventId))
-                return new BaseResult("Event not found");
+                return new ErrorResult("Event not found");
 
             if (repository.UserEvents.Any(x => x.UserId.Equals(user.Id) && x.EventId == eventId))
-                return new BaseResult("You have subscribed already on this event");
+                return new ErrorResult("You have subscribed already on this event");
 
             var userEvent = new UserEvent 
             {
@@ -68,9 +68,9 @@ namespace WhereToGoWebApi.Services
             var dbResult = await repository.CreateAndSaveEntityAsync(userEvent);
 
             if (!dbResult)
-                return new BaseResult("Failed to save in DataBase");
+                return new ErrorResult("Failed to save in DataBase");
 
-            return new BaseResult();
+            return new OkResult();
         }
     }
 }

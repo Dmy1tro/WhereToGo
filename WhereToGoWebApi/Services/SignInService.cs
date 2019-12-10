@@ -47,8 +47,8 @@ namespace WhereToGoWebApi.Services
                 return new LoginResult("login or password is wrong");
 
             var roles = await userManager.GetRolesAsync(user);
-
-            var roleClaims = roles.Select(x => new Claim(ClaimsIdentity.DefaultRoleClaimType, x));
+            var roleClaims = roles.Select(x => 
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, x));
 
             var claims = new List<Claim>(roleClaims)
             {

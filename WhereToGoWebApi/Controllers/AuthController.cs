@@ -75,7 +75,7 @@ namespace WhereToGoWebApi.Controllers
             if (!registerCompanyResult.IsValid)
                 return BadRequest(registerCompanyResult.Errors);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -23,33 +23,20 @@ namespace WhereToGoWebApi.Services
             this.mapper = mapper;
         }
 
-        public async Task<BaseResult> CreateEvent(EventViewModel model, string userId)
+        public async Task<BaseResult> CreateEvent(EventViewModel model, string organaizerId)
         {
-            if (!dbRepository.Organizers.Any(x => x.OrganizerId == userId))
-                return new BaseResult("Organaizer not found");
+            if (!dbRepository.Organizers.Any(x => x.OrganizerId == organaizerId))
+                return new ErrorResult("Organaizer not found");
 
-            var organaizerId = userId;
-
-            var _event = new Event 
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Address = model.Address,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
-                StartTime = model.StartTime,
-                EndTime = model.EndTime,
-                Price = model.Price,
-                Quantity = model.Quantity,
-                OrganizerId = organaizerId
-            };
+            var _event = mapper.Map<Event>(model);
+            _event.OrganizerId = organaizerId;
 
             var result = await dbRepository.CreateAndSaveEntityAsync(_event);
 
             if (!result)
-                return new BaseResult("Failed save to DataBase");
+                return new ErrorResult("Failed to save in DataBase");
 
-            return new BaseResult();
+            return new OkResult();
         }
 
         public async Task<IEnumerable<EventViewModel>> GetAllEvents() =>

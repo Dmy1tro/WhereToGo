@@ -12,10 +12,12 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
     {
         public static void Proceed(EventDbContext dbContext, UserManager<User> userManager)
         {
-            User user;
+            dbContext.Database.EnsureCreated();
+
+            User user = dbContext.Users.FirstOrDefault(x => x.UserName.Equals("Dmytro"));
             Organizer organizer;
 
-            if (!dbContext.Users.Any())
+            if (user is null)
             {
                 user = new User { UserName = "Dmytro", LastName = "Laskuryk", Email = "dmytro@gmail.com", SecurityStamp = Guid.NewGuid().ToString() };
 
@@ -24,24 +26,18 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
                 userManager.AddToRoleAsync(user, AppRoles.organaizerRole).Wait();
                 userManager.AddToRoleAsync(user, AppRoles.userRole).Wait();
             }
-            else
-            {
-                user = dbContext.Users.FirstOrDefault();
-            }
 
-            if (!dbContext.Organizers.Any())
+            organizer = dbContext.Organizers.FirstOrDefault(x => x.OrganizerId.Equals(user.Id));
+
+            if (organizer is null)
             {
                 organizer = new Organizer { InstType = "some_info", PlaceName = "Cafe", TelNumber="11111", Position = "Boss", User = user };
                 
                 dbContext.Organizers.Add(organizer);
                 dbContext.SaveChanges();
             }
-            else
-            {
-                organizer = dbContext.Organizers.FirstOrDefault();
-            }
 
-            if (!dbContext.Events.Any())
+            if (!dbContext.Events.Any(x => x.OrganizerId == organizer.OrganizerId))
             {
                 var list = new List<Event> 
                 {
