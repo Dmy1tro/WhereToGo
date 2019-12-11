@@ -6,15 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20191021123348_Initial.cs" />
-    <Compile Remove="Migrations\20191021123348_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20191021124020_initial.cs" />
-    <Compile Remove="Migrations\20191021124020_initial.Designer.cs" />
-    <Compile Remove="Migrations\20191127163404_moveToLocalDb.cs" />
-    <Compile Remove="Migrations\20191127163404_moveToLocalDb.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />

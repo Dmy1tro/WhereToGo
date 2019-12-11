@@ -25,10 +25,11 @@ namespace WhereToGoWebApi
             {
                 var context = scope.ServiceProvider.GetRequiredService<EventDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 try
                 {
-                    SampleData.Proceed(context, userManager);
+                    SampleData.Proceed(context, userManager, roleManager);
                 }
                 catch (Exception ex)
                 {

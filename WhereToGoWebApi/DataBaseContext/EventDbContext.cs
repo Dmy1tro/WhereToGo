@@ -6,10 +6,7 @@ namespace WhereToGoWebApi.DataBaseContext
 {
     public class EventDbContext : IdentityDbContext<User>
     {
-        public EventDbContext(DbContextOptions<EventDbContext> options) : base(options) 
-        {
-            //Database.EnsureCreated();
-        }
+        public EventDbContext(DbContextOptions<EventDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

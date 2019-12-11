@@ -10,8 +10,8 @@ using WhereToGoWebApi.DataBaseContext;
 namespace WhereToGoWebApi.Migrations
 {
     [DbContext(typeof(EventDbContext))]
-    [Migration("20191021133950_MeetAndGo")]
-    partial class MeetAndGo
+    [Migration("20191211121753_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,11 +161,17 @@ namespace WhereToGoWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(500);
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500);
+
+                    b.Property<DateTime?>("EndDate");
+
+                    b.Property<DateTime?>("EndTime");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -176,7 +182,11 @@ namespace WhereToGoWebApi.Migrations
 
                     b.Property<decimal>("Price");
 
-                    b.Property<int>("TotalAmount");
+                    b.Property<int>("Quantity");
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.Property<DateTime>("StartTime");
 
                     b.HasKey("EventId");
 
@@ -202,7 +212,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventMeeting");
+                    b.ToTable("EventMeetings");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.Meeting", b =>
@@ -224,20 +234,28 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Meeting");
+                    b.ToTable("Meetings");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.Organizer", b =>
                 {
                     b.Property<string>("OrganizerId");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("InstType")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.Property<string>("PlaceName")
                         .IsRequired()
                         .HasMaxLength(500);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Position")
                         .IsRequired()
                         .HasMaxLength(200);
+
+                    b.Property<string>("TelNumber")
+                        .IsRequired()
+                        .HasMaxLength(50);
 
                     b.HasKey("OrganizerId");
 
@@ -280,6 +298,8 @@ namespace WhereToGoWebApi.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -334,7 +354,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserEvent");
+                    b.ToTable("UserEvents");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -391,8 +411,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasOne("WhereToGoWebApi.Models.User", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.Event", b =>
@@ -412,8 +431,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasOne("WhereToGoWebApi.Models.User", "User")
                         .WithMany("EventMeetings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.Meeting", b =>
@@ -425,8 +443,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasOne("WhereToGoWebApi.Models.User", "User")
                         .WithMany("Meetings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.Organizer", b =>
@@ -446,8 +463,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasOne("WhereToGoWebApi.Models.User", "User")
                         .WithMany("Ratings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WhereToGoWebApi.Models.UserEvent", b =>
@@ -459,8 +475,7 @@ namespace WhereToGoWebApi.Migrations
 
                     b.HasOne("WhereToGoWebApi.Models.User", "User")
                         .WithMany("UserEvents")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

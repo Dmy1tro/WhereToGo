@@ -10,9 +10,18 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
 {
     public class SampleData
     {
-        public static void Proceed(EventDbContext dbContext, UserManager<User> userManager)
+        public static void Proceed(EventDbContext dbContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             dbContext.Database.EnsureCreated();
+
+            if (!roleManager.RoleExistsAsync(AppRoles.userRole).Result)
+                roleManager.CreateAsync(new IdentityRole(AppRoles.userRole)).Wait();
+
+            if (!roleManager.RoleExistsAsync(AppRoles.organaizerRole).Result)
+                roleManager.CreateAsync(new IdentityRole(AppRoles.organaizerRole)).Wait();
+
+            if (!roleManager.RoleExistsAsync(AppRoles.adminRole).Result)
+                roleManager.CreateAsync(new IdentityRole(AppRoles.adminRole)).Wait();
 
             User user = dbContext.Users.FirstOrDefault(x => x.UserName.Equals("Dmytro"));
             Organizer organizer;

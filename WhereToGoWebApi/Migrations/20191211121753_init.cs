@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WhereToGoWebApi.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,7 +40,8 @@ namespace WhereToGoWebApi.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    LastName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -158,8 +159,10 @@ namespace WhereToGoWebApi.Migrations
                 columns: table => new
                 {
                     OrganizerId = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(maxLength: 200, nullable: false),
-                    Description = table.Column<string>(maxLength: 500, nullable: false)
+                    InstType = table.Column<string>(maxLength: 200, nullable: false),
+                    PlaceName = table.Column<string>(maxLength: 500, nullable: false),
+                    Position = table.Column<string>(maxLength: 200, nullable: false),
+                    TelNumber = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -180,9 +183,13 @@ namespace WhereToGoWebApi.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 200, nullable: false),
                     Description = table.Column<string>(maxLength: 500, nullable: false),
-                    Date = table.Column<DateTime>(nullable: false),
+                    Address = table.Column<string>(maxLength: 500, nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: true),
+                    StartTime = table.Column<DateTime>(nullable: false),
+                    EndTime = table.Column<DateTime>(nullable: true),
                     Price = table.Column<decimal>(nullable: false),
-                    TotalAmount = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
                     OrganizerId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -214,13 +221,40 @@ namespace WhereToGoWebApi.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "EventId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Meetings",
+                columns: table => new
+                {
+                    MeetingId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TotalMembers = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: false),
+                    EventId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Meetings", x => x.MeetingId);
+                    table.ForeignKey(
+                        name: "FK_Meetings_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Meetings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -241,17 +275,17 @@ namespace WhereToGoWebApi.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "EventId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Ratings_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserEvent",
+                name: "UserEvents",
                 columns: table => new
                 {
                     UserEventId = table.Column<int>(nullable: false)
@@ -261,19 +295,45 @@ namespace WhereToGoWebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserEvent", x => x.UserEventId);
+                    table.PrimaryKey("PK_UserEvents", x => x.UserEventId);
                     table.ForeignKey(
-                        name: "FK_UserEvent_Events_EventId",
+                        name: "FK_UserEvents_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "EventId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserEvent_AspNetUsers_UserId",
+                        name: "FK_UserEvents_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventMeetings",
+                columns: table => new
+                {
+                    EventMeetingId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: false),
+                    MeetingId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventMeetings", x => x.EventMeetingId);
+                    table.ForeignKey(
+                        name: "FK_EventMeetings_Meetings_MeetingId",
+                        column: x => x.MeetingId,
+                        principalTable: "Meetings",
+                        principalColumn: "MeetingId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventMeetings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -326,9 +386,29 @@ namespace WhereToGoWebApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EventMeetings_MeetingId",
+                table: "EventMeetings",
+                column: "MeetingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventMeetings_UserId",
+                table: "EventMeetings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_OrganizerId",
                 table: "Events",
                 column: "OrganizerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Meetings_EventId",
+                table: "Meetings",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Meetings_UserId",
+                table: "Meetings",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ratings_EventId",
@@ -341,13 +421,13 @@ namespace WhereToGoWebApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserEvent_EventId",
-                table: "UserEvent",
+                name: "IX_UserEvents_EventId",
+                table: "UserEvents",
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserEvent_UserId",
-                table: "UserEvent",
+                name: "IX_UserEvents_UserId",
+                table: "UserEvents",
                 column: "UserId");
         }
 
@@ -372,13 +452,19 @@ namespace WhereToGoWebApi.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "EventMeetings");
+
+            migrationBuilder.DropTable(
                 name: "Ratings");
 
             migrationBuilder.DropTable(
-                name: "UserEvent");
+                name: "UserEvents");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Meetings");
 
             migrationBuilder.DropTable(
                 name: "Events");
