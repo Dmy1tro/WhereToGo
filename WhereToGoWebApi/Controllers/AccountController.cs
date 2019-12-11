@@ -35,6 +35,22 @@ namespace WhereToGoWebApi.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = AppRoles.organaizerRole)]
+        [HttpPost("editOrganizerProfile")]
+        public async Task<IActionResult> EditOrganaizerProfile(OrganizerProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Model not valid!");
+
+            var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
+            var result = await accountService.EditOrganaizerInfo(model, userId);
+
+            if (!result.IsValid)
+                return BadRequest(result.Errors);
+
+            return NoContent();
+        }
+
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordModel)
         {

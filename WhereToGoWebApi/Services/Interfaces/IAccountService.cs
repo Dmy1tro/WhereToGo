@@ -11,6 +11,8 @@ namespace WhereToGoWebApi.Services
     {
         Task<BaseResult> EditProfile(UserProfileViewModel model, string userId);
 
+        Task<BaseResult> EditOrganaizerInfo(OrganizerProfileViewModel model, string userId);
+
         Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string userId);
 
         Task<BaseResult> SubscribeOnEvent(int eventId, string userId);

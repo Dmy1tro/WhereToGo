@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +14,16 @@ namespace WhereToGoWebApi.Services
 {
     public class AccountService : IAccountService
     {
+        private const string failedToSaveInDb = "Failed to save in DataBase";
         private readonly UserManager<User> userManager;
         private readonly IEventDbRepository repository;
+        private readonly IMapper mapper;
 
-        public AccountService(UserManager<User> userManager, IEventDbRepository repository)
+        public AccountService(UserManager<User> userManager, IEventDbRepository repository, IMapper mapper)
         {
             this.userManager = userManager;
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         public async Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string userId)
@@ -31,6 +36,18 @@ namespace WhereToGoWebApi.Services
                 return new ErrorResult(result.Errors.Select(x => x.Description));
 
             return new OkResult();
+        }
+
+        public async Task<BaseResult> EditOrganaizerInfo(OrganizerProfileViewModel model, string userId)
+        {
+            var organizer = mapper.Map<Organizer>(model);
+            organizer.OrganizerId = userId;
+
+            var result = await repository.UpdateAndSaveEntityAsync(organizer);
+
+            return result ?
+                (BaseResult)new OkResult() :
+                (BaseResult)new ErrorResult(failedToSaveInDb);
         }
 
         public async Task<BaseResult> EditProfile(UserProfileViewModel model, string userId)
@@ -68,7 +85,7 @@ namespace WhereToGoWebApi.Services
             var dbResult = await repository.CreateAndSaveEntityAsync(userEvent);
 
             if (!dbResult)
-                return new ErrorResult("Failed to save in DataBase");
+                return new ErrorResult(failedToSaveInDb);
 
             return new OkResult();
         }

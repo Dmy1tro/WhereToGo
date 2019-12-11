@@ -19,7 +19,7 @@ namespace WhereToGoWebApi.Models
         [Required]
         public string Position { get; set; }
 
-        [Phone]
+        [Required, MaxLength(50)]
         public string TelNumber { get; set; }
 
         [Required]
