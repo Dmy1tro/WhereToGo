@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -92,12 +93,15 @@ namespace WhereToGoWebApi.Services
             return new RegisterResult(user);
         }
 
-        public async Task<RegisterResult> RegisterCompany(RegisterOrganaizerViewModel model)
+        public async Task<RegisterResult> RegisterCompany(RegisterOrganaizerViewModel model, string userId)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
+            var user = await userManager.FindByIdAsync(userId);
 
-            if (!user.PasswordHash.Equals(model.PasswordHash))
-                return new RegisterResult("Failed to confirm email");
+            if (user is null)
+                return new RegisterResult("User not found");
+
+            if (await repository.Organizers.AnyAsync(x => x.OrganizerId == userId))
+                return new RegisterResult("You are organizer already!");
 
             var organaizer = new Organizer
             {

@@ -4,12 +4,6 @@ namespace WhereToGoWebApi.Models
 {
     public class RegisterOrganaizerViewModel
     {
-        [Required, EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
-
         [Required]
         public string InstType { get; set; }
 

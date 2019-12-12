@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WhereToGoWebApi.Common.Authentication;
+using WhereToGoWebApi.Common.Extensions;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Services;
 
@@ -22,7 +25,7 @@ namespace WhereToGoWebApi.Controllers
             Ok();
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginViewModel loginModel)
+        public async Task<ActionResult> Login([FromBody] LoginViewModel loginModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("not valid model");
@@ -42,7 +45,7 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpPost("registerUser")]
-        public async Task<ActionResult> RegisterUser(RegisterUserViewModel registerModel)
+        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserViewModel registerModel)
         {
             if (!ModelState.IsValid || !registerModel.AcceptRules)
                 return BadRequest("model not valid");
@@ -52,25 +55,25 @@ namespace WhereToGoWebApi.Controllers
             if (!(registerUserResult.IsValid))
                 return BadRequest(registerUserResult.Errors);
 
-            if (registerModel.CreateCompany)
-            {
-                return Ok(
-                    new
-                    {
-                        passwordHash = registerUserResult.User.PasswordHash
-                    });
-            }
+            var loginResult = await signInService.LoginUser(new LoginViewModel { Email = registerModel.Email, Password = registerModel.Password, RememberMe = false });
 
-            return NoContent();
+            return Ok(
+                new 
+                {
+                    token = loginResult.Token
+                });
         }
 
+        [Authorize]
         [HttpPost("registerCompany")]
         public async Task<ActionResult> RegisterCompany(RegisterOrganaizerViewModel registerModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("model not valid");
 
-            var registerCompanyResult = await signInService.RegisterCompany(registerModel);
+            var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
+
+            var registerCompanyResult = await signInService.RegisterCompany(registerModel, userId);
 
             if (!registerCompanyResult.IsValid)
                 return BadRequest(registerCompanyResult.Errors);

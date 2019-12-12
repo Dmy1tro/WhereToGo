@@ -13,6 +13,6 @@ namespace WhereToGoWebApi.Services
 
         Task<RegisterResult> RegisterUser(RegisterUserViewModel model);
 
-        Task<RegisterResult> RegisterCompany(RegisterOrganaizerViewModel model);
+        Task<RegisterResult> RegisterCompany(RegisterOrganaizerViewModel model, string userId);
     }
 }

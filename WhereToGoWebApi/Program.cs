@@ -35,7 +35,6 @@ namespace WhereToGoWebApi
                 {
                     var r = ex.Message;
                 }
-
             }
 
             host.Run();
