@@ -49,11 +49,16 @@ namespace WhereToGoWebApi
 
             services.AddIdentity<User, IdentityRole>(options =>
             {
+                // Password
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
+
+                // User
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = null;
             }
             ).AddEntityFrameworkStores<EventDbContext>()
             .AddDefaultTokenProviders();

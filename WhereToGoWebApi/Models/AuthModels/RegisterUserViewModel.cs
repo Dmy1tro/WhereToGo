@@ -24,6 +24,7 @@ namespace WhereToGoWebApi.Models
 
         public bool CreateCompany { get; set; }
 
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Rules must be accepted")]
         public bool AcceptRules { get; set; }
     }
 }

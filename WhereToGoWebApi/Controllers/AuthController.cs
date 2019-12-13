@@ -27,9 +27,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginViewModel loginModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("not valid model");
-
             var loginResult = await signInService.LoginUser(loginModel);
 
             if (!loginResult.IsValid)
@@ -47,9 +44,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("registerUser")]
         public async Task<ActionResult> RegisterUser([FromBody] RegisterUserViewModel registerModel)
         {
-            if (!ModelState.IsValid || !registerModel.AcceptRules)
-                return BadRequest("model not valid");
-
             var registerUserResult = await signInService.RegisterUser(registerModel);
 
             if (!(registerUserResult.IsValid))
@@ -68,9 +62,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("registerCompany")]
         public async Task<ActionResult> RegisterCompany(RegisterOrganaizerViewModel registerModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("model not valid");
-
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
 
             var registerCompanyResult = await signInService.RegisterCompany(registerModel, userId);

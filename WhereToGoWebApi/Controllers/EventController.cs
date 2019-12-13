@@ -37,9 +37,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("createEvent")]   
         public async Task<IActionResult> CreateEvent(EventViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Model not valid");
-
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
 
             var result = await eventService.CreateEvent(model, userId);

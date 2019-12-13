@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhereToGoWebApi.Common.Authentication;
@@ -9,8 +10,8 @@ using WhereToGoWebApi.Services;
 namespace WhereToGoWebApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
+    [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService accountService;
@@ -23,9 +24,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("editProfile")]
         public async Task<IActionResult> EditProfile(UserProfileViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Model not valid!");
-
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
             var result = await accountService.EditProfile(model, userId);
 
@@ -39,9 +37,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("editOrganizerProfile")]
         public async Task<IActionResult> EditOrganaizerProfile(OrganizerProfileViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Model not valid!");
-
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
             var result = await accountService.EditOrganaizerInfo(model, userId);
 
@@ -54,9 +49,6 @@ namespace WhereToGoWebApi.Controllers
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Model not valid!");
-
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
             var result = await accountService.ChangePassword(changePasswordModel, userId);
 
@@ -67,7 +59,7 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpPost("subscribeOnEvent/{eventId}")]
-        public async Task<ActionResult> SubscribeOnEvent([FromRoute] int eventId)
+        public async Task<ActionResult> SubscribeOnEvent([Required, FromRoute] int eventId)
         {
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
             var result = await accountService.SubscribeOnEvent(eventId, userId);
