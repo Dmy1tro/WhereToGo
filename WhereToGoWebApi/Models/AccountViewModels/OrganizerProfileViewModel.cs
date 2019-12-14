@@ -24,8 +24,9 @@ namespace WhereToGoWebApi.Models.AccountViewModels
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Organizer, OrganizerProfileViewModel>();
-            profile.CreateMap<OrganizerProfileViewModel, Organizer>();
+            profile.CreateMap<Organizer, OrganizerProfileViewModel>()
+                .ReverseMap();
+
         }
     }
 }

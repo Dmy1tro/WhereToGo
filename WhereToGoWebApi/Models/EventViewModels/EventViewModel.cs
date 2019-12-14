@@ -40,8 +40,9 @@ namespace WhereToGoWebApi.Models.EventViewModels
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Event, EventViewModel>();
-            profile.CreateMap<EventViewModel, Event>();
+            profile.CreateMap<Event, EventViewModel>()
+                .ReverseMap();
+
         }
     }
 }
