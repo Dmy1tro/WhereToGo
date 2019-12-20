@@ -110,7 +110,7 @@ namespace WhereToGoWebApi.Controllers
                 : BadRequest(result.Errors);
         }
 
-        [HttpPost("removeComment/{commentId}")]
+        [HttpPost("removeComment")]
         public async Task<ActionResult> RemoveComment([FromBody] int commentId)
         {
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);

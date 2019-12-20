@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Models.AccountViewModels;
 using WhereToGoWebApi.Services.Interfaces;
@@ -16,11 +17,15 @@ namespace WhereToGoWebApi.Services
     public class AdminService : IAdminService
     {
         private readonly UserManager<User> userManager;
+        private readonly IEventDbRepository repository;
         private readonly IMapper mapper;
 
-        public AdminService(UserManager<User> userManager, IMapper mapper)
+        public AdminService(UserManager<User> userManager, 
+                            IEventDbRepository repository,
+                            IMapper mapper)
         {
             this.userManager = userManager;
+            this.repository = repository;
             this.mapper = mapper;
         }
 
@@ -35,9 +40,18 @@ namespace WhereToGoWebApi.Services
             .ProjectTo<UserProfileViewModel>(mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
-        public Task<BaseResult> RemoveComment(int commentId)
+        public async Task<BaseResult> RemoveComment(int commentId)
         {
-            throw new NotImplementedException();
+            var comment = await repository.Comments.FirstOrDefaultAsync(x => x.CommentId == commentId);
+
+            if (comment is null)
+                return new ErrorResult($"Comment with id '{commentId}' not found");
+
+            var result = await repository.RemoveAndSaveEntityAsync<Comment>(comment);
+
+            return result
+                ? new OkResult() as BaseResult
+                : new ErrorResult(Exceptions.failedToRemoveInDb);
         }
     }
 }

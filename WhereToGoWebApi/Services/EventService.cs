@@ -39,13 +39,22 @@ namespace WhereToGoWebApi.Services
             return new OkResult();
         }
 
-        public async Task<EventViewModel> GetEvent(int eventId) =>
-            await dbRepository.Events
-            .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(x => x.EventId == eventId);
+        public async Task<EventFullViewModel> GetEvent(int eventId)
+        {
+            var dbEvent = await dbRepository.Events
+                .AsNoTracking()
+                .Include(x => x.Ratings)
+                .Include("Comments.User")
+                .FirstOrDefaultAsync(x => x.EventId == eventId);
+
+            var result = mapper.Map<EventFullViewModel>(dbEvent);
+
+            return result;
+        }
 
         public async Task<IEnumerable<EventViewModel>> GetAllEvents() =>
             await dbRepository.Events
+            .AsNoTracking()
             .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
             .ToListAsync();
 

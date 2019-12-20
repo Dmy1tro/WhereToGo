@@ -139,6 +139,8 @@ namespace WhereToGoWebApi.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<DateTime>("Date");
+
                     b.Property<int>("EventId");
 
                     b.Property<string>("UserId")

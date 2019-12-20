@@ -12,6 +12,8 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
     {
         public static void Proceed(EventDbContext dbContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            //dbContext.Database.EnsureDeleted();
+
             dbContext.Database.EnsureCreated();
 
             if (!roleManager.RoleExistsAsync(AppRoles.userRole).Result)

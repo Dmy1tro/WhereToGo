@@ -22,15 +22,21 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpGet("{eventId}")]
-        public async Task<ActionResult<EventViewModel>> GetEvent(int eventId) =>
-            Ok(await eventService.GetEvent(eventId));
+        public async Task<ActionResult<EventFullViewModel>> GetEvent(int eventId)
+        {
+            var result = await eventService.GetEvent(eventId);
+
+            return result != null
+                ? Ok(result) as ActionResult
+                : BadRequest($"Event with id '{eventId}' not found");
+        }
 
         [HttpGet("getAllEvents")]
         public async Task<ActionResult<IEnumerable<EventViewModel>>> GetAllEvents() =>
             Ok(await eventService.GetAllEvents());
 
         [HttpGet("getEventsByFilters")]
-        public async Task<ActionResult<IEnumerable<EventViewModel>>> GetEventsByFilters(EventViewModelFilter filters)
+        public async Task<ActionResult<IEnumerable<EventViewModel>>> GetEventsByFilters([FromQuery] EventViewModelFilter filters)
         {
             var events = await eventService.GetEventsByFilters(filters);
 

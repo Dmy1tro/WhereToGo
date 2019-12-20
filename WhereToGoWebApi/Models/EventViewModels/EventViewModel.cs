@@ -41,8 +41,11 @@ namespace WhereToGoWebApi.Models.EventViewModels
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Event, EventViewModel>()
+                .IncludeAllDerived()
                 .ReverseMap();
 
+            profile.CreateMap<Event, EventFullViewModel>()
+                .ForMember(d => d.AvgRate, m => m.MapFrom(s => s.Ratings.Count != 0 ? s.Ratings.Average(r => r.Rate) : 0));
         }
     }
 }

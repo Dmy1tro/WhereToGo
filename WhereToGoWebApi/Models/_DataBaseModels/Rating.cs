@@ -9,6 +9,10 @@ namespace WhereToGoWebApi.Models
 {
     public class Rating
     {
+        public Rating()
+        {
+        }
+
         public Rating(int rate, int eventId, string userId)
         {
             Rate = rate;

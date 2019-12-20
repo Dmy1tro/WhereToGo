@@ -1,15 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WhereToGoWebApi.Models
 {
     public class Comment
     {
+        public Comment()
+        {
+        }
+
         public Comment(string userId, int eventId, string text)
         {
             UserId = userId;
             EventId = eventId;
             BodyText = text;
+            Date = DateTime.Now;
         }
 
         [Key]
@@ -17,6 +23,9 @@ namespace WhereToGoWebApi.Models
 
         [Required, MaxLength(300)]
         public string BodyText { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
 
         [Required]
         public string UserId { get; set; }

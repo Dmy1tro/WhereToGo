@@ -13,9 +13,6 @@ namespace WhereToGoWebApi.Services
 {
     public class AccountService : IAccountService
     {
-        private const string failedToSaveInDb = "Failed to save in DataBase";
-        private const string failedToRemoveInDb = "Failed to remove in DataBase";
-        private const string failedToUpdateInDb = "Failed to update in DataBase";
         private readonly UserManager<User> userManager;
         private readonly IEventDbRepository repository;
         private readonly IMapper mapper;
@@ -32,13 +29,13 @@ namespace WhereToGoWebApi.Services
             if (!await repository.Events.AnyAsync(x => x.EventId == vmComment.EventId))
                 return new ErrorResult($"Event with id '{vmComment.EventId}' not found");
 
-            var comment = new Comment(userId, vmComment.EventId, vmComment.Text);
+            var comment = new Comment(userId, vmComment.EventId, vmComment.BodyText);
 
             var result = await repository.CreateAndSaveEntityAsync<Comment>(comment);
 
             return result
                 ? new OkResult() as BaseResult
-                : new ErrorResult(failedToSaveInDb);
+                : new ErrorResult(Exceptions.failedToSaveInDb);
         }
 
         public async Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string userId)
@@ -62,7 +59,7 @@ namespace WhereToGoWebApi.Services
 
             return result ?
                 (BaseResult)new OkResult() :
-                (BaseResult)new ErrorResult(failedToSaveInDb);
+                (BaseResult)new ErrorResult(Exceptions.failedToSaveInDb);
         }
 
         public async Task<BaseResult> EditProfile(UserProfileViewModel model, string userId)
@@ -101,13 +98,25 @@ namespace WhereToGoWebApi.Services
             if (!await repository.Events.AnyAsync(x => x.EventId == ratingView.EventId))
                 return new ErrorResult($"Event with id '{ratingView.EventId}' not found");
 
-            var rating = new Rating(ratingView.Rate, ratingView.EventId, userId);
+            var rate = await repository.Ratings.FirstOrDefaultAsync(x => x.EventId == ratingView.EventId && x.UserId == userId);
 
-            var result = await repository.CreateAndSaveEntityAsync<Rating>(rating);
+            if(rate is null)
+            {
+                var rating = new Rating(ratingView.Rate, ratingView.EventId, userId);
 
-            return result
+                var saveResult = await repository.CreateAndSaveEntityAsync<Rating>(rating);
+
+                return saveResult
+                    ? new OkResult() as BaseResult
+                    : new ErrorResult(Exceptions.failedToSaveInDb);
+            }
+
+            rate.Rate = ratingView.Rate;
+            var updateResult = await repository.UpdateAndSaveEntityAsync<Rating>(rate);
+
+            return updateResult
                 ? new OkResult() as BaseResult
-                : new ErrorResult(failedToSaveInDb);
+                : new ErrorResult(Exceptions.failedToUpdateInDb);
         }
 
         public async Task<BaseResult> RemoveComment(int commentId, string userId)
@@ -124,7 +133,7 @@ namespace WhereToGoWebApi.Services
 
             return result
                 ? new OkResult() as BaseResult
-                : new ErrorResult(failedToRemoveInDb);
+                : new ErrorResult(Exceptions.failedToRemoveInDb);
         }
 
         public async Task<BaseResult> SubscribeOnEvent(int eventId, string userId)
@@ -144,7 +153,7 @@ namespace WhereToGoWebApi.Services
             var dbResult = await repository.CreateAndSaveEntityAsync(userEvent);
 
             if (!dbResult)
-                return new ErrorResult(failedToSaveInDb);
+                return new ErrorResult(Exceptions.failedToSaveInDb);
 
             return new OkResult();
         }
@@ -162,7 +171,7 @@ namespace WhereToGoWebApi.Services
             var dbResult = await repository.RemoveAndSaveEntityAsync(userEvent);
 
             if (!dbResult)
-                return new ErrorResult(failedToRemoveInDb);
+                return new ErrorResult(Exceptions.failedToRemoveInDb);
 
             return new OkResult();
         }
@@ -177,13 +186,13 @@ namespace WhereToGoWebApi.Services
             if (comment.UserId != userId)
                 return new ErrorResult("Comment do not belong to user");
 
-            comment.BodyText = vmComment.Text;
+            comment.BodyText = vmComment.BodyText;
 
             var result = await repository.UpdateAndSaveEntityAsync<Comment>(comment);
 
             return result
                 ? new OkResult() as BaseResult
-                : new ErrorResult(failedToUpdateInDb);
+                : new ErrorResult(Exceptions.failedToUpdateInDb);
         }
 
         private async Task<BaseResult> ValidateInvitation(Invitation invitation)
