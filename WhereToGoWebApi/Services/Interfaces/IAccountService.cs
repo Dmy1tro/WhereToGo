@@ -16,5 +16,17 @@ namespace WhereToGoWebApi.Services
         Task<BaseResult> ChangePassword(ChangePasswordViewModel model, string userId);
 
         Task<BaseResult> SubscribeOnEvent(int eventId, string userId);
+
+        Task<BaseResult> UnScribeFromEvent(int eventId, string userId);
+
+        Task<BaseResult> RateEvent(RatingViewModel ratingView, string userId);
+
+        Task<BaseResult> AddComment(CommentViewModel comment, string userId);
+
+        Task<BaseResult> UpdateComment(CommentViewModel comment, string userId);
+
+        Task<BaseResult> RemoveComment(int commentId, string userId);
+
+        Task<BaseResult> InviteUserToEvent(Invitation invitation, string userId);
     }
 }

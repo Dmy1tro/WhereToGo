@@ -39,6 +39,11 @@ namespace WhereToGoWebApi.Services
             return new OkResult();
         }
 
+        public async Task<EventViewModel> GetEvent(int eventId) =>
+            await dbRepository.Events
+            .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(x => x.EventId == eventId);
+
         public async Task<IEnumerable<EventViewModel>> GetAllEvents() =>
             await dbRepository.Events
             .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)

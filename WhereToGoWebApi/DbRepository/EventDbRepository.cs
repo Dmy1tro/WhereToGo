@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WhereToGoWebApi.DataBaseContext;
 using WhereToGoWebApi.IDbRepository;
@@ -44,13 +45,20 @@ namespace WhereToGoWebApi.DbRepository
             return await this.SaveChangesAsync();
         }
 
+        public async Task<bool> RemoveAndSaveEntityAsync<T>(T entity) where T : class
+        {
+            context.Set<T>().Remove(entity);
+
+            return await this.SaveChangesAsync();
+        }
+
         public async Task<bool> SaveChangesAsync()
         {
             try
             {
                 return await context.SaveChangesAsync() > 0;
             }
-            catch
+            catch(Exception ex)
             {
                 return false;
             }

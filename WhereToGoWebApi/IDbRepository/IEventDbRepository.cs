@@ -19,5 +19,6 @@ namespace WhereToGoWebApi.IDbRepository
 
         Task<bool> CreateAndSaveEntityAsync<T>(T entity) where T : class;
         Task<bool> UpdateAndSaveEntityAsync<T>(T entity) where T : class;
+        Task<bool> RemoveAndSaveEntityAsync<T>(T entity) where T : class;
     }
 }

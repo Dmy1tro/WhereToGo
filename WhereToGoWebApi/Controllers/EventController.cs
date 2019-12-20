@@ -21,6 +21,10 @@ namespace WhereToGoWebApi.Controllers
             this.eventService = eventService;
         }
 
+        [HttpGet("{eventId}")]
+        public async Task<ActionResult<EventViewModel>> GetEvent(int eventId) =>
+            Ok(await eventService.GetEvent(eventId));
+
         [HttpGet("getAllEvents")]
         public async Task<ActionResult<IEnumerable<EventViewModel>>> GetAllEvents() =>
             Ok(await eventService.GetAllEvents());

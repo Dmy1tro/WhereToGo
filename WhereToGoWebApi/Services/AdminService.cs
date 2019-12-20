@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Models.AccountViewModels;
 using WhereToGoWebApi.Services.Interfaces;
+using WhereToGoWebApi.Services.ServiceResults;
 
 namespace WhereToGoWebApi.Services
 {
@@ -27,5 +28,16 @@ namespace WhereToGoWebApi.Services
             await userManager.Users
             .ProjectTo<UserProfileViewModel>(mapper.ConfigurationProvider)
             .ToListAsync();
+
+        public async Task<UserProfileViewModel> GetUserProfile(string userId) =>
+            await userManager.Users
+            .Where(x => x.Id == userId)
+            .ProjectTo<UserProfileViewModel>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+
+        public Task<BaseResult> RemoveComment(int commentId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

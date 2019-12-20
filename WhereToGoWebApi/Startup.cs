@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 using WhereToGoWebApi.DataBaseContext;
 using WhereToGoWebApi.DbRepository;
 using WhereToGoWebApi.IDbRepository;
@@ -89,7 +90,7 @@ namespace WhereToGoWebApi
 
             services.AddSwaggerGen(s => 
             {
-                s.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "WhereToGoApi", Version = "v1" });
+                s.SwaggerDoc("v1", new Info { Title = "WhereToGoApi", Version = "v1" });
             });
         }
 

@@ -5,6 +5,13 @@ namespace WhereToGoWebApi.Models
 {
     public class Comment
     {
+        public Comment(string userId, int eventId, string text)
+        {
+            UserId = userId;
+            EventId = eventId;
+            BodyText = text;
+        }
+
         [Key]
         public int CommentId { get; set; }
 

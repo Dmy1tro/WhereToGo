@@ -54,7 +54,9 @@ namespace WhereToGoWebApi.Controllers
             return Ok(
                 new 
                 {
-                    token = loginResult.Token
+                    token = loginResult.Token,
+                    roles = loginResult.Roles.ToArray(),
+                    name = loginResult.Name
                 });
         }
 
