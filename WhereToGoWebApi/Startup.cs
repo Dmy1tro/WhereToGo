@@ -91,6 +91,8 @@ namespace WhereToGoWebApi
             services.AddSwaggerGen(s => 
             {
                 s.SwaggerDoc("v1", new Info { Title = "WhereToGoApi", Version = "v1" });
+
+                s.DescribeAllEnumsAsStrings();
             });
         }
 

@@ -55,7 +55,7 @@ namespace WhereToGoWebApi.Controllers
                 : BadRequest(result.Errors);
         }
 
-        [HttpPost("subscribeOnEvent/{eventId}")]
+        [HttpPost("subscribeOnEvent")]
         public async Task<ActionResult> SubscribeOnEvent([FromBody] int eventId)
         {
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
@@ -66,7 +66,7 @@ namespace WhereToGoWebApi.Controllers
                 : BadRequest(result.Errors);
         }
 
-        [HttpPost("unScribeOnEvent/{eventId}")]
+        [HttpPost("unScribeOnEvent")]
         public async Task<ActionResult> UnScribeOnEvent([FromBody] int eventId)
         {
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);

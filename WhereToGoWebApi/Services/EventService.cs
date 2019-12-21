@@ -77,7 +77,33 @@ namespace WhereToGoWebApi.Services
             if (filter.MaxPrice != null)
                 result = result.Where(x => x.Price <= filter.MaxPrice);
 
-            return await result.ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
+            switch (filter.OrderBy)
+            {
+                case OrderParameter.Name:
+                    result = result.OrderBy(x => x.Name);
+                    break;
+                case OrderParameter.NameDesc:
+                    result = result.OrderByDescending(x => x.Name);
+                    break;
+                case OrderParameter.Date:
+                    result = result.OrderBy(x => x.StartDate);
+                    break;
+                case OrderParameter.DateDesc:
+                    result = result.OrderByDescending(x => x.StartDate);
+                    break;
+                case OrderParameter.Price:
+                    result = result.OrderBy(x => x.Price);
+                    break;
+                case OrderParameter.PriceDesc:
+                    result = result.OrderByDescending(x => x.Price);
+                    break;
+                default:
+                    result = result.OrderBy(x => x.StartDate);
+                    break;
+            }
+
+            return await result
+                .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
                 .ToListAsync();
         }
     }
