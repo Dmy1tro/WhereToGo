@@ -1,14 +1,19 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Models.EventViewModels;
 using WhereToGoWebApi.Services.Interfaces;
 using WhereToGoWebApi.Services.ServiceResults;
+using OkResult = WhereToGoWebApi.Services.ServiceResults.OkResult;
 
 namespace WhereToGoWebApi.Services
 {
@@ -26,10 +31,12 @@ namespace WhereToGoWebApi.Services
         public async Task<BaseResult> CreateEvent(EventViewModel model, string organaizerId)
         {
             if (!dbRepository.Organizers.Any(x => x.OrganizerId == organaizerId))
-                return new ErrorResult("Organaizer not found");
+                return new ErrorResult("Organizer not found");
 
             var _event = mapper.Map<Event>(model);
             _event.OrganizerId = organaizerId;
+
+            await LoadFileToEvent(_event, model.ImageFile);
 
             var result = await dbRepository.CreateAndSaveEntityAsync(_event);
 
@@ -54,16 +61,17 @@ namespace WhereToGoWebApi.Services
 
         public async Task<IEnumerable<EventViewModel>> GetAllEvents() =>
             await dbRepository.Events
-            .AsNoTracking()
-            .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
-            .ToListAsync();
+                .AsNoTracking()
+                .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
+                .ToListAsync();
 
         public async Task<IEnumerable<EventViewModel>> GetEventsByFilters(EventViewModelFilter filter)
         {
             var result = dbRepository.Events;
 
             if (!string.IsNullOrEmpty(filter.Name))
-                result = result.Where(x => x.Name.Contains(filter.Name, System.StringComparison.InvariantCultureIgnoreCase));
+                result = result.Where(x =>
+                    x.Name.Contains(filter.Name, System.StringComparison.InvariantCultureIgnoreCase));
 
             if (filter.MinDate != null)
                 result = result.Where(x => x.StartDate >= filter.MinDate);
@@ -105,6 +113,32 @@ namespace WhereToGoWebApi.Services
             return await result
                 .ProjectTo<EventViewModel>(mapper.ConfigurationProvider)
                 .ToListAsync();
+        }
+
+        public async Task<FileContentResult> GetImageOfEvent(int eventId)
+        {
+            var _event = await dbRepository.Events
+                .AsNoTracking()
+                .Select(x => new { x.EventId, x.Image, x.ImageMimeType})
+                .FirstOrDefaultAsync(x => x.EventId == eventId);
+
+            return _event?.ImageMimeType != null
+                ? new FileContentResult(_event.Image, _event.ImageMimeType)
+                : null;
+        }
+
+        private async Task LoadFileToEvent(Event _event, IFormFile file)
+        {
+            if (file is null)
+                return;
+
+            _event.ImageMimeType = file.ContentType;
+
+            using (var stream = new MemoryStream())
+            {
+                await file.OpenReadStream().CopyToAsync(stream);
+                _event.Image = stream.ToArray();
+            }
         }
     }
 }

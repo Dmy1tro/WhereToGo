@@ -40,6 +40,11 @@ namespace WhereToGoWebApi.Models
         [Required, ForeignKey("OrganizerId")]
         public virtual Organizer Organizer { get; set; }
 
+        [MaxLength(300)]
+        public string ImageMimeType { get; set; }
+
+        public byte[] Image { get; set; }
+
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
         public virtual ICollection<UserEvent> UserEvents { get; set; } = new List<UserEvent>();

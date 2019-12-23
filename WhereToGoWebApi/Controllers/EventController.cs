@@ -31,6 +31,14 @@ namespace WhereToGoWebApi.Controllers
                 : BadRequest($"Event with id '{eventId}' not found");
         }
 
+        [HttpGet("getImageForEvent/{eventId}")]
+        public async Task<IActionResult> GetImageForEvent(int eventId)
+        {
+            var result = await eventService.GetImageOfEvent(eventId);
+
+            return result ?? new NotFoundResult() as ActionResult;
+        }
+
         [HttpGet("getAllEvents")]
         public async Task<ActionResult<IEnumerable<EventViewModel>>> GetAllEvents() =>
             Ok(await eventService.GetAllEvents());
@@ -45,7 +53,7 @@ namespace WhereToGoWebApi.Controllers
 
         [Authorize(Roles = AppRoles.organaizerRole)]
         [HttpPost("createEvent")]   
-        public async Task<IActionResult> CreateEvent(EventViewModel model)
+        public async Task<IActionResult> CreateEvent([FromForm] EventViewModel model)
         {
             var userId = User.Claims.GetUserClaim(AppClaims.IdClaim);
 

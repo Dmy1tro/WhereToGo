@@ -9,6 +9,6 @@ namespace WhereToGoWebApi.Models.EventViewModels
     public class EventFullViewModel : EventViewModel
     {
         public List<CommentFullViewModel> Comments { get; set; } = new List<CommentFullViewModel>();
-        public double AvgRate { get; set; }
+
     }
 }

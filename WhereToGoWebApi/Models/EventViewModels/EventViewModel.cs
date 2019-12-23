@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using WhereToGoWebApi.Common.Mapper;
 
 namespace WhereToGoWebApi.Models.EventViewModels
@@ -38,14 +39,19 @@ namespace WhereToGoWebApi.Models.EventViewModels
         [Required]
         public int Quantity { get; set; }
 
+        public double? AvgRate { get; set; }
+
+        [DataType(DataType.Upload)]
+        public IFormFile ImageFile { get; set; }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Event, EventViewModel>()
+                .ForMember(d => d.AvgRate, m => m.MapFrom(s => s.Ratings.Average(r => (int?)r.Rate)))
                 .IncludeAllDerived()
                 .ReverseMap();
 
-            profile.CreateMap<Event, EventFullViewModel>()
-                .ForMember(d => d.AvgRate, m => m.MapFrom(s => s.Ratings.Count != 0 ? s.Ratings.Average(r => r.Rate) : 0));
+            profile.CreateMap<Event, EventFullViewModel>();
         }
     }
 }

@@ -173,6 +173,11 @@ namespace WhereToGoWebApi.Migrations
 
                     b.Property<DateTime?>("EndTime");
 
+                    b.Property<byte[]>("Image");
+
+                    b.Property<string>("ImageMimeType")
+                        .HasMaxLength(300);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200);
