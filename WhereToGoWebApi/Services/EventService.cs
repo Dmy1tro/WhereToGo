@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using WhereToGoWebApi.IDbRepository;
 using WhereToGoWebApi.Models;
 using WhereToGoWebApi.Models.EventViewModels;
@@ -115,16 +114,14 @@ namespace WhereToGoWebApi.Services
                 .ToListAsync();
         }
 
-        public async Task<FileContentResult> GetImageOfEvent(int eventId)
+        public async Task<(byte[], string)> GetImageOfEvent(int eventId)
         {
             var _event = await dbRepository.Events
                 .AsNoTracking()
-                .Select(x => new { x.EventId, x.Image, x.ImageMimeType})
+                .Select(x => new { x.EventId, x.Image, x.ImageMimeType })
                 .FirstOrDefaultAsync(x => x.EventId == eventId);
 
-            return _event?.ImageMimeType != null
-                ? new FileContentResult(_event.Image, _event.ImageMimeType)
-                : null;
+            return (_event?.Image, _event?.ImageMimeType);
         }
 
         private async Task LoadFileToEvent(Event _event, IFormFile file)

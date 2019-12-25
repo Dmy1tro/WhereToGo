@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -34,9 +35,12 @@ namespace WhereToGoWebApi.Controllers
         [HttpGet("getImageForEvent/{eventId}")]
         public async Task<IActionResult> GetImageForEvent(int eventId)
         {
-            var result = await eventService.GetImageOfEvent(eventId);
+            var (image, type) = await eventService.GetImageOfEvent(eventId);
 
-            return result ?? new NotFoundResult() as ActionResult;
+            if (image is null || type is null)
+                return BadRequest();
+
+            return File(image, type);
         }
 
         [HttpGet("getAllEvents")]

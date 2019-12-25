@@ -11,7 +11,6 @@ namespace WhereToGoWebApi.Models.EventViewModels
 {
     public class EventViewModel : IMapFrom<Event>
     {
-        [Required]
         public int EventId { get; set; }
 
         [Required, MaxLength(200)]

@@ -14,6 +14,6 @@ namespace WhereToGoWebApi.Services.Interfaces
         Task<EventFullViewModel> GetEvent(int eventId);
         Task<IEnumerable<EventViewModel>> GetAllEvents();
         Task<IEnumerable<EventViewModel>> GetEventsByFilters(EventViewModelFilter filter);
-        Task<FileContentResult> GetImageOfEvent(int eventId);
+        Task<(byte[], string)> GetImageOfEvent(int eventId);
     }
 }
