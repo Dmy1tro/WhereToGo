@@ -36,6 +36,7 @@ namespace WhereToGoWebApi.DataBaseContext.SeedData
 
                 userManager.AddToRoleAsync(user, AppRoles.organaizerRole).Wait();
                 userManager.AddToRoleAsync(user, AppRoles.userRole).Wait();
+                userManager.AddToRoleAsync(user, AppRoles.adminRole).Wait();
             }
 
             organizer = dbContext.Organizers.FirstOrDefault(x => x.OrganizerId.Equals(user.Id));

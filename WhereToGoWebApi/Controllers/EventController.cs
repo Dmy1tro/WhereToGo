@@ -23,9 +23,9 @@ namespace WhereToGoWebApi.Controllers
         }
 
         [HttpGet("{eventId}")]
-        public async Task<ActionResult<EventFullViewModel>> GetEvent(int eventId)
+        public async Task<ActionResult<EventViewModel>> GetEvent(int eventId)
         {
-            var result = await eventService.GetEvent(eventId);
+            var result = (EventViewModel)await eventService.GetEvent(eventId);
 
             return result != null
                 ? Ok(result) as ActionResult
